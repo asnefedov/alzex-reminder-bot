@@ -5,21 +5,21 @@ from aiogram import Bot, Dispatcher
 from sqlalchemy.engine import URL
 
 from bot.config import load_config
-# from bot.models import BaseModel, create_async_engine, get_session_maker
+from bot.database import create_async_engine, get_session_maker
 from bot.handlers.user import user_router
-# from bot.middlewares.checking_registrants import CheckingRegistrants
+from bot.middlewares.check_register import CheckRegister
 
 
 async def on_startup():
     pass
 
 
-# def register_all_middlewares(dp: Dispatcher):
-#     dp.message.outer_middleware(CheckingRegistrants())
-#     dp.callback_query.outer_middleware(CheckingRegistrants())
-#
-#     dp.message.middleware(CheckingRegistrants())
-#     dp.callback_query.middleware(CheckingRegistrants())
+def register_all_middlewares(dp: Dispatcher):
+    dp.message.outer_middleware(CheckRegister())
+    dp.callback_query.outer_middleware(CheckRegister())
+
+    dp.message.middleware(CheckRegister())
+    dp.callback_query.middleware(CheckRegister())
 
 
 async def main() -> None:
@@ -38,25 +38,21 @@ async def main() -> None:
     # await on_startup()
 
     # Database
-    # postgres_url = URL.create(
-    #     'postgresql+asyncpg',
-    #     username=config.db.user,
-    #     password=config.db.password,
-    #     host=config.db.host,
-    #     database=config.db.database,
-    #     port=config.db.port
-    # )
-    # async_engine = create_async_engine(postgres_url)
-    # session_maker = get_session_maker(async_engine)
-    # await proceed_schemas(async_engine, BaseModel.metadata)
+    postgres_url = URL.create(
+        'postgresql+asyncpg',
+        username=config.db.user,
+        password=config.db.password,
+        host=config.db.host,
+        database=config.db.database,
+        port=config.db.port
+    )
+    async_engine = create_async_engine(postgres_url)
+    session_maker = get_session_maker(async_engine)
 
     # Register Middlewares
-    # register_all_middlewares(dp)
-    # dp.message.middleware(CheckingRegistrants())
-    # dp.callback_query.middleware(CheckingRegistrants())
-
-    await dp.start_polling(bot)
-    # await dp.start_polling(bot, session_maker=session_maker)
+    register_all_middlewares(dp)
+    # Start polling
+    await dp.start_polling(bot, session_maker=session_maker)
 
 
 if __name__ == '__main__':
