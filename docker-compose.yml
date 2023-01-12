@@ -1,19 +1,33 @@
 version: '3.7'
 services:
   db:
-    image: postgres:15.1
+    image: postgres:15.1-alpine
     container_name: database
+    environment:
+      TZ: 'Europe/Moscow'
     env_file:
       - ./.env
     volumes:
       - pgdata:/var/lib/postgresql/data
     restart: on-failure
+
+  adminer:
+    image: adminer
+    container_name: adminer
+    environment:
+      ADMINER_DESIGN: 'dracula'
+    restart: always
     ports:
-      - '5432:5432'
+      - '8080:8080'
+    depends_on:
+      - db
+
   bot:
     build: .
     container_name: bot
     command: sh -c "make migrate && python -m app"
+    environment:
+      TZ: 'Europe/Moscow'
     env_file:
       - ./.env
     restart: always
