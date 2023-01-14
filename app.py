@@ -29,10 +29,11 @@ async def main() -> None:
     dp = Dispatcher()
 
     # Register routers
-    # for router in [
-    #     start_router
-    # ]:
-    dp.include_router(user_router)
+    for router in [
+        user_router
+    ]:
+        dp.include_router(router)
+    # dp.include_router(user_router)
 
     # On startup
     # await on_startup()
