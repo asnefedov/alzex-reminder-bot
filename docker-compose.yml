@@ -25,7 +25,7 @@ services:
   bot:
     build: .
     container_name: bot
-    command: sh -c "make migrate && python -m app"
+    command: sh -c "make generate && make migrate && python -m app"
     environment:
       TZ: 'Europe/Moscow'
     env_file:

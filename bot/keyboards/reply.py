@@ -26,7 +26,7 @@ class ReplyKB:
     )
 
     transactionsMenu = ReplyKeyboardMarkup(
-        [
+        keyboard=[
             [
                 KeyboardButton(text='Удалить одну транзакцию')
             ],
@@ -44,7 +44,7 @@ class ReplyKB:
     )
 
     settingsMenu = ReplyKeyboardMarkup(
-        [
+        keyboard=[
             [
                 KeyboardButton(text='🔔 Настройка напоминаний')
             ],

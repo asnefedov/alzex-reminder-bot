@@ -1,6 +1,5 @@
 from typing import Union
 
-from sqlalchemy import MetaData
 from sqlalchemy.ext.asyncio import create_async_engine as _create_async_engine
 from sqlalchemy.engine import URL
 from sqlalchemy.ext.asyncio import AsyncEngine, AsyncSession
