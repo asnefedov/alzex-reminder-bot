@@ -1,5 +1,6 @@
 from typing import Any
 
+import numpy as np
 import pandas as pd
 from pandas.core.frame import DataFrame
 
@@ -27,7 +28,8 @@ class CsvReader:
     def filtered_df_by_status(df: Any) -> DataFrame:
         """Retrieves transactions from the DataFrame only with the status 'Unconfirmed'"""
         filtered = df[(df['Статус'].isnull())]
-        return filtered
+        change_nan_on_none = filtered.replace({np.nan: None})
+        return change_nan_on_none
 
     @staticmethod
     def df_to_dict(df: Any) -> list:
