@@ -5,7 +5,7 @@ from aiogram.types import Message, CallbackQuery
 from sqlalchemy import select
 from sqlalchemy.orm import sessionmaker
 
-from bot.database import User
+from bot.database.user import create_user, check_user_exists
 
 
 class CheckRegister(BaseMiddleware):
@@ -15,24 +15,11 @@ class CheckRegister(BaseMiddleware):
             event: Union[Message, CallbackQuery],
             data: Dict[str, Any]
     ) -> Any:
-        session_maker: sessionmaker = data['session_maker']
-        async with session_maker() as session:
-            async with session.begin():
-                result = await session.execute(select(User).where(User.user_id == event.from_user.id))
-                user: User = result.one_or_none()
+        session_maker = data['session_maker']
+        user = event.from_user
 
-                if user is not None:
-                    pass
-                else:
-                    user = User(
-                        user_id=event.from_user.id,
-                        username=event.from_user.username,
-                        fullname=event.from_user.full_name
-                    )
-                    await session.merge(user)
-                    if isinstance(event, Message):
-                        await event.answer('Вы успешно добавлены в БД')
-                    else:
-                        await event.message.answer('Вы успешно добавлены в БД')
-
+        # Check user in DB and add if user not in DB
+        if await check_user_exists(user.id, session_maker) is False:
+            result = await create_user(user.id, user.username, user.full_name, session_maker)
+            await data['bot'].send_message(event.from_user.id, result)
         return await handler(event, data)
