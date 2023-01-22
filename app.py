@@ -6,7 +6,7 @@ from sqlalchemy.engine import URL
 
 from bot.config import load_config
 from bot.database import create_async_engine, get_session_maker
-from bot.handlers.user import user_router
+from bot.handlers import user_router, import_router
 from bot.middlewares.check_register import CheckRegister
 
 
@@ -30,7 +30,8 @@ async def main() -> None:
 
     # Register routers
     for router in [
-        user_router
+        user_router,
+        import_router
     ]:
         dp.include_router(router)
     # dp.include_router(user_router)
